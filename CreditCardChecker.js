@@ -24,53 +24,59 @@ const batch = [valid1, valid2, valid3, valid4, valid5, invalid1, invalid2, inval
 
 
 // Add your functions below: 
-let companiesFaulty = [];
+let companiesFaulty = [];  // set global variable
+let invalid = [];
+let valid = [];
+
+// validate the card number with the Luhn algorithm
 function validateCred(arr) {
-  let sum = 0;
-  let doubled = 0;
-  for(let i = arr.length - 1; i > 0; i--) {
+  let sum = 0;  // variable to hold the sum of the card's numbers
+  let doubled = 0; // part of the Luhn algorithm
+  for(let i = arr.length - 1; i > 0; i--) { // iterate through the array of numbers
+    // if index is even add to sum
     if(arr[i] % 2 === 0) {
       sum += arr[i];
-    } else {
-      doubled = arr[i] * 2;
+    } else { // if index is odd
+      doubled = arr[i] * 2; // double the number then check if greater than 9
       if(doubled > 9) {
-        sum += doubled - 9;
+        sum += doubled - 9; // subtract 9 if greater than 9
       } else {
-        sum += doubled;
+        sum += doubled; // else add to the sum
       }
     }
   }
   if(sum % 10 === 0) {
-    return true;
+    return true; // if sum is divisible by 10 then card is valid
   } else {
-    return false;
+    return false; // if sum is not divisible by 10 then card is invalid
   }
 }
-  let invalid = [];
-  let valid = [];
 
+// find invalid cards
 function findInvalidCards(cards) {
-  for(let i = cards.length - 1; i > 0; i--) {
-    if(validateCred(cards[i]) == false) {
-      invalid.unshift(cards[i]);
+  for(let i = cards.length - 1; i > 0; i--) {  // move through array backwards
+    if(validateCred(cards[i]) == false) { // validate card
+      invalid.unshift(cards[i]); // put number at front of invalid array
     } else {
-      valid.unshift(cards[i]);
+      valid.unshift(cards[i]); // put number at front of valid array
     }
   }
-  return invalid;
+  return invalid; // return the invalid array of numbers
 }
-findInvalidCards(batch);
+findInvalidCards(batch); // call the function to populate the arrays
 
 function idInvalidCardCompanies(invalidArr) {
-  let badCompanies = [];
-  let badCompaniesList;
-  let companies = {
+  let badCompanies = []; // array of invalid cards from company
+  let badCompaniesList; // hold unique list of bad companies (no doubles)
+  let companies = { // object that contains companies, key is equal to card first number
     3: 'Amex',
     4: 'Visa',
     5: 'Mastercard',
     6: 'Discover'
   }
+  // loop through invalid number array to index to company
   for(let i = 0; i < invalidArr.length; i++) {
+    // put company in array
     if(invalidArr[i][0] === 3) {
       badCompanies.unshift('Amex (American Express)');
     } else if(invalidArr[i][0] == 4) {
@@ -83,8 +89,10 @@ function idInvalidCardCompanies(invalidArr) {
       badCompanies.unshift('Company not found!');
     }
   }
-
+  // using the spread operator, iterate through badCompanies array and create unique list
   badCompaniesList = [...new Set(badCompanies)];
+  // print results to console
   console.log(badCompaniesList);
 };
+// call the function to find bad card / card company 
 idInvalidCardCompanies(invalid);
